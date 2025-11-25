@@ -1,7 +1,12 @@
 import * as THREE from "three";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { World } from "./world";
 import "./style.css";
+
+//Stats
+const stats = new Stats();
+document.body.append(stats.dom);
 
 // Renderer Setup
 const renderer = new THREE.WebGLRenderer();
@@ -26,7 +31,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 // Scene Setup
 const scene = new THREE.Scene();
-const world = new World(32);
+const world = new World();
 world.generate();
 scene.add(world);
 
@@ -52,6 +57,7 @@ function setupLights() {
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+    stats.update();
 }
 
 window.addEventListener("resize", () => {
