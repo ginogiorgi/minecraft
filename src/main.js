@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import "./style.css";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { World } from "./world";
+import "./style.css";
 
 // Renderer Setup
 const renderer = new THREE.WebGLRenderer();
@@ -25,8 +26,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 // Scene Setup
 const scene = new THREE.Scene();
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshLambertMaterial({ color: "green" });
+const world = new World(32);
+world.generate();
+scene.add(world);
 
 // Lights setup
 function setupLights() {
@@ -46,18 +48,6 @@ function setupLights() {
     scene.add(ambient);
 }
 
-// World Setup
-function setupWorld(size) {
-    for (let x = 0; x < size; x++) {
-        for (let z = 0; z < size; z++) {
-            const cube = new THREE.Mesh(geometry, material);
-
-            cube.position.set(x, 0, z);
-            scene.add(cube);
-        }
-    }
-}
-
 // Render Loop
 function animate() {
     requestAnimationFrame(animate);
@@ -71,5 +61,4 @@ window.addEventListener("resize", () => {
 });
 
 setupLights();
-setupWorld(32);
 animate();
