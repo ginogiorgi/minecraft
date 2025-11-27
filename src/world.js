@@ -10,6 +10,7 @@ export class World extends THREE.Group {
     }
 
     generate() {
+        this.clear();
         const maxCount = this.size.width * this.size.width * this.size.height;
         const mesh = new THREE.InstancedMesh(geometry, material, maxCount);
         const matrix = new THREE.Matrix4();
