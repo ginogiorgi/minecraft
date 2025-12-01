@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { RGBShiftShader } from "three/examples/jsm/Addons.js";
+import { SimplexNoise } from "three/examples/jsm/Addons.js";
 
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshLambertMaterial({ color: "green" });
@@ -10,7 +10,13 @@ export class World extends THREE.Group {
      * @type {{id: number, instanceId: number}[][][]}
      */
     data = [];
-
+    params = {
+        terrain: {
+            scale: 30,
+            magnitude: 0.5,
+            offset: 0.2,
+        },
+    };
     constructor(size = { width: 64, height: 32 }) {
         super();
         this.size = size;
@@ -18,12 +24,13 @@ export class World extends THREE.Group {
 
     // Generates world data and meshes
     generate() {
+        this.initializeTerrain();
         this.generateTerrain();
         this.generateMeshes();
     }
 
-    // World terrain data generator
-    generateTerrain() {
+    // Initializing world terrain data
+    initializeTerrain() {
         this.data = [];
         for (let x = 0; x < this.size.width; x++) {
             const slice = [];
@@ -33,13 +40,35 @@ export class World extends THREE.Group {
 
                 for (let z = 0; z < this.size.width; z++) {
                     row.push({
-                        id: 1,
+                        id: 0,
                         instanceId: null,
                     });
                 }
                 slice.push(row);
             }
             this.data.push(slice);
+        }
+    }
+
+    // Generates world terrain data
+    generateTerrain() {
+        const simplex = new SimplexNoise();
+
+        for (let x = 0; x < this.size.width; x++) {
+            for (let z = 0; z < this.size.width; z++) {
+                const value = simplex.noise(
+                    x / this.params.terrain.scale,
+                    z / this.params.terrain.scale
+                );
+                const scaledNoise =
+                    this.params.terrain.offset +
+                    this.params.terrain.magnitude * value;
+                let height = Math.floor(this.size.height * scaledNoise);
+                height = Math.max(0, Math.min(height, this.size.height - 1));
+                for (let y = 0; y <= height; y++) {
+                    this.setBlockId(x, y, z, 1);
+                }
+            }
         }
     }
 
