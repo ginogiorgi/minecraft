@@ -94,13 +94,18 @@ export class World extends THREE.Group {
         for (let x = 0; x < this.size.width; x++) {
             for (let y = 0; y < this.size.height; y++) {
                 for (let z = 0; z < this.size.width; z++) {
-                    const blockId = this.getBlock(x, y, z).id;
+                    const block = this.getBlock(x, y, z);
+                    if (!block) continue;
+                    const blockId = block.id;
                     const instanceId = mesh.count;
                     const blockType = Object.values(blocks).find(
                         (x) => x.id === blockId
                     );
 
-                    if (blockId != 0) {
+                    if (
+                        blockId !== blocks.empty.id &&
+                        !this.isBlockObscored(x, y, z)
+                    ) {
                         matrix.setPosition(x + 0.5, y + 0.5, z + 0.5);
                         mesh.setMatrixAt(instanceId, matrix);
                         mesh.setColorAt(
@@ -175,6 +180,34 @@ export class World extends THREE.Group {
             return true;
         } else {
             return false;
+        }
+    }
+    /**
+     * Returns true if this block ins completely hidden by other blocks
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     * @returns {boolean}
+     */
+    isBlockObscored(x, y, z) {
+        const up = this.getBlock(x, y + 1, z)?.id ?? blocks.empty.id;
+        const down = this.getBlock(x, y - 1, z)?.id ?? blocks.empty.id;
+        const left = this.getBlock(x + 1, y, z)?.id ?? blocks.empty.id;
+        const right = this.getBlock(x - 1, y, z)?.id ?? blocks.empty.id;
+        const foward = this.getBlock(x, y, z + 1)?.id ?? blocks.empty.id;
+        const back = this.getBlock(x, y + 1, z - 1)?.id ?? blocks.empty.id;
+
+        if (
+            up === blocks.empty.id ||
+            down === blocks.empty.id ||
+            left === blocks.empty.id ||
+            right === blocks.empty.id ||
+            foward === blocks.empty.id ||
+            back === blocks.empty.id
+        ) {
+            return false;
+        } else {
+            return true;
         }
     }
 }
