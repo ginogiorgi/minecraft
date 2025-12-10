@@ -13,4 +13,15 @@ export const blocks = {
         name: "dirt",
         color: 0x807020,
     },
+    stone: {
+        id: 3,
+        name: "Stone",
+        color: 0x808080,
+        scale: {
+            x: 30,
+            y: 30,
+            z: 30,
+        },
+        scarcity: 0.5,
+    },
 };
