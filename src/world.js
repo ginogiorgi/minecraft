@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { SimplexNoise } from "three/examples/jsm/Addons.js";
 import { RNG } from "./rng";
-import { blocks } from "./blocks";
+import { blocks, resourses } from "./blocks";
 
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshLambertMaterial();
@@ -20,7 +20,7 @@ export class World extends THREE.Group {
             offset: 0.2,
         },
     };
-    constructor(size = { width: 64, height: 32 }) {
+    constructor(size = { width: 100, height: 32 }) {
         super();
         this.size = size;
     }
@@ -31,7 +31,7 @@ export class World extends THREE.Group {
 
         this.initializeTerrain();
         this.generateResourses(rng);
-        this.generateTerrain(rng);
+        // this.generateTerrain(rng);
         this.generateMeshes();
     }
 
@@ -60,20 +60,22 @@ export class World extends THREE.Group {
     generateResourses(rng) {
         const simplex = new SimplexNoise(rng);
 
-        for (let x = 0; x < this.size.width; x++) {
-            for (let y = 0; y < this.size.height; y++) {
-                for (let z = 0; z < this.size.width; z++) {
-                    const value = simplex.noise3d(
-                        x / blocks.stone.scale.x,
-                        y / blocks.stone.scale.y,
-                        z / blocks.stone.scale.z
-                    );
-                    if (value > blocks.stone.scarcity) {
-                        this.setBlockId(x, y, z, blocks.stone.id);
+        resourses.forEach((resourse) => {
+            for (let x = 0; x < this.size.width; x++) {
+                for (let y = 0; y < this.size.height; y++) {
+                    for (let z = 0; z < this.size.width; z++) {
+                        const value = simplex.noise3d(
+                            x / resourse.scale.x,
+                            y / resourse.scale.y,
+                            z / resourse.scale.z
+                        );
+                        if (value > resourse.scarcity) {
+                            this.setBlockId(x, y, z, resourse.id);
+                        }
                     }
                 }
             }
-        }
+        });
     }
 
     // Generates world terrain data

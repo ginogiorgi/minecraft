@@ -1,11 +1,9 @@
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { blocks } from "./blocks";
+import { blocks, resourses } from "./blocks";
 
 export function createUI(world) {
     const gui = new GUI();
     const terrainFolder = gui.addFolder("Terrain");
-    const resoursesFolder = gui.addFolder("Resourses");
-    const scaleFolder = resoursesFolder.addFolder("Scale");
 
     gui.add(world.size, "width", 8, 128, 1).name("Width");
     gui.add(world.size, "height", 8, 128, 1).name("Height");
@@ -15,10 +13,16 @@ export function createUI(world) {
         .add(world.params.terrain, "magnitude", 0, 1)
         .name("Magnitude");
     terrainFolder.add(world.params.terrain, "offset", 0, 1).name("Offset");
-    resoursesFolder.add(blocks.stone, "scarcity", 0, 1).name("Scarcity");
-    scaleFolder.add(blocks.stone.scale, "x", 10, 100).name("X Scale");
-    scaleFolder.add(blocks.stone.scale, "y", 10, 100).name("Y Scale");
-    scaleFolder.add(blocks.stone.scale, "z", 10, 100).name("Z Scale");
+
+    resourses.forEach((resourse) => {
+        const resoursesFolder = gui.addFolder(resourse.name);
+        const scaleFolder = resoursesFolder.addFolder("Scale");
+
+        resoursesFolder.add(resourse, "scarcity", 0, 1).name("Scarcity");
+        scaleFolder.add(resourse.scale, "x", 10, 100).name("X Scale");
+        scaleFolder.add(resourse.scale, "y", 10, 100).name("Y Scale");
+        scaleFolder.add(resourse.scale, "z", 10, 100).name("Z Scale");
+    });
 
     gui.onChange(() => {
         world.generate();
