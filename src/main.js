@@ -72,7 +72,7 @@ let previousTime = performance.now();
 
 function animate() {
     let currentTime = performance.now();
-    let dt = currentTime - previousTime;
+    let dt = (currentTime - previousTime) / 1000;
 
     requestAnimationFrame(animate);
     player.applyInputs(dt);
@@ -88,5 +88,5 @@ window.addEventListener("resize", () => {
 });
 
 setupLights();
-createUI(world);
+createUI(world, player);
 animate();

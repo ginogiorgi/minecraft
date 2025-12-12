@@ -2,14 +2,15 @@ import * as THREE from "three";
 import { PointerLockControls } from "three/examples/jsm/Addons.js";
 export class Player {
     maxSpeed = 10;
-    input = new THREE.Vector2();
+    input = new THREE.Vector3();
+    velocity = new THREE.Vector3();
     camera = new THREE.PerspectiveCamera(
         100,
         window.innerWidth / window.innerHeight,
         0.1,
         200
     );
-    constrols = new PointerLockControls(this.camera, document.body);
+    controls = new PointerLockControls(this.camera, document.body);
     constructor(scene) {
         this.position.set(32, 16, 32);
         scene.add(this.camera);
@@ -19,8 +20,14 @@ export class Player {
     }
 
     applyInputs(dt) {
-        if (this.constrols.isLocked) {
-            console.log(dt);
+        if (this.controls.isLocked) {
+            this.velocity.x = this.input.x;
+            this.velocity.z = this.input.z;
+            this.controls.moveRight(this.velocity.x * dt);
+            this.controls.moveForward(this.velocity.z * dt);
+
+            document.getElementById("player-position").innerHTML =
+                this.toString();
         }
     }
 
@@ -37,8 +44,8 @@ export class Player {
      * @param {KeyboardEvent} event
      */
     onKeyDown(event) {
-        if (!this.constrols.inLocked) {
-            this.constrols.lock();
+        if (!this.controls.isLocked) {
+            this.controls.lock();
         }
         switch (event.code) {
             case "KeyW":
@@ -75,5 +82,16 @@ export class Player {
                 this.input.x = 0;
                 break;
         }
+    }
+    /**
+     * Returns player position in a readable string form
+     * @returns {string}
+     */
+    toString() {
+        let str = "";
+        str += `X: ${this.position.x.toFixed(3)}`;
+        str += `Y: ${this.position.y.toFixed(3)}`;
+        str += `Z: ${this.position.z.toFixed(3)}`;
+        return str;
     }
 }
