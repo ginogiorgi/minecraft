@@ -7,6 +7,7 @@ function loadTexture(path) {
 
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.LinearMipMapNearestFilter;
     return texture;
 }
 
@@ -27,7 +28,6 @@ export const blocks = {
     grass: {
         id: 1,
         name: "grass",
-        color: 0x559020,
         material: [
             new THREE.MeshLambertMaterial({ map: textures.grass_side_carried }), // right
             new THREE.MeshLambertMaterial({ map: textures.grass_side_carried }), // left
@@ -40,13 +40,11 @@ export const blocks = {
     dirt: {
         id: 2,
         name: "dirt",
-        color: 0x807020,
         material: new THREE.MeshLambertMaterial({ map: textures.dirt }),
     },
     stone: {
         id: 3,
         name: "Stone",
-        color: 0x808080,
         scale: {
             x: 30,
             y: 30,
@@ -58,7 +56,6 @@ export const blocks = {
     coalOre: {
         id: 4,
         name: "Coal Ore",
-        color: 0x202020,
         scale: {
             x: 20,
             y: 20,
@@ -70,7 +67,6 @@ export const blocks = {
     ironOre: {
         id: 5,
         name: "Iron Ore",
-        color: 0xffff00,
         scale: {
             x: 60,
             y: 60,
