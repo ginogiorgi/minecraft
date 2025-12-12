@@ -22,16 +22,16 @@ renderer.setClearColor("lightblue");
 document.body.appendChild(renderer.domElement);
 
 // Camera Setup
-const camera = new THREE.PerspectiveCamera(
+const orbitCamera = new THREE.PerspectiveCamera(
     100,
     window.innerWidth / window.innerHeight
 );
 
-camera.position.set(-32, 16, -32);
-camera.lookAt(0, 0, 0);
+orbitCamera.position.set(-32, 16, -32);
+orbitCamera.lookAt(0, 0, 0);
 
 // Controls
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(orbitCamera, renderer.domElement);
 
 // Scene Setup
 const scene = new THREE.Scene();
@@ -76,14 +76,19 @@ function animate() {
 
     requestAnimationFrame(animate);
     player.applyInputs(dt);
-    renderer.render(scene, player.camera);
+    renderer.render(
+        scene,
+        player.controls.isLocked ? player.camera : orbitCamera
+    );
     stats.update();
     previousTime = currentTime;
 }
 
 window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    orbitCamera.aspect = window.innerWidth / window.innerHeight;
+    orbitCamera.updateProjectionMatrix();
+    playerCamera.aspect = window.innerWidth / window.innerHeight;
+    playerCamera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
