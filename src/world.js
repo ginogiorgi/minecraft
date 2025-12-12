@@ -31,7 +31,7 @@ export class World extends THREE.Group {
 
         this.initializeTerrain();
         this.generateResourses(rng);
-        // this.generateTerrain(rng);
+        this.generateTerrain(rng);
         this.generateMeshes();
     }
 
@@ -112,40 +112,48 @@ export class World extends THREE.Group {
     // Generates 3d representation from world data
     generateMeshes() {
         this.clear();
-        const maxCount = this.size.width * this.size.width * this.size.height;
-        const mesh = new THREE.InstancedMesh(geometry, material, maxCount);
-        const matrix = new THREE.Matrix4();
 
-        mesh.count = 0;
+        const maxCount = this.size.width * this.size.width * this.size.height;
+
+        // Creating a lookup table where the key is the block id
+        const meshes = {};
+
+        Object.values(blocks)
+            .filter((blockType) => blockType.id !== blocks.empty.id)
+            .forEach((blockType) => {
+                const mesh = new THREE.InstancedMesh(
+                    geometry,
+                    blockType.material,
+                    maxCount
+                );
+                mesh.name = blockType.name;
+                mesh.count = 0;
+                meshes[blockType.id] = mesh;
+            });
+
+        const matrix = new THREE.Matrix4();
 
         for (let x = 0; x < this.size.width; x++) {
             for (let y = 0; y < this.size.height; y++) {
                 for (let z = 0; z < this.size.width; z++) {
                     const block = this.getBlock(x, y, z);
-                    if (!block) continue;
                     const blockId = block.id;
-                    const instanceId = mesh.count;
-                    const blockType = Object.values(blocks).find(
-                        (x) => x.id === blockId
-                    );
 
-                    if (
-                        blockId !== blocks.empty.id &&
-                        !this.isBlockObscored(x, y, z)
-                    ) {
+                    if (blockId === blocks.empty.id) continue;
+
+                    const mesh = meshes[blockId];
+                    const instanceId = mesh.count;
+
+                    if (!this.isBlockObscored(x, y, z)) {
                         matrix.setPosition(x + 0.5, y + 0.5, z + 0.5);
                         mesh.setMatrixAt(instanceId, matrix);
-                        mesh.setColorAt(
-                            instanceId,
-                            new THREE.Color(blockType.color)
-                        );
                         this.setBlockInstanceId(x, y, z, instanceId);
                         mesh.count++;
                     }
                 }
             }
         }
-        this.add(mesh);
+        this.add(...Object.values(meshes));
     }
 
     /**
