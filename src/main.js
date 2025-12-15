@@ -5,6 +5,7 @@ import { World } from "./world";
 import { createUI } from "./ui";
 import "./style.css";
 import { Player } from "./player";
+import { Physics } from "./physics";
 
 //Stats
 const stats = new Stats();
@@ -36,10 +37,13 @@ const controls = new OrbitControls(orbitCamera, renderer.domElement);
 // Scene Setup
 const scene = new THREE.Scene();
 const world = new World();
+
 world.generate();
 scene.add(world);
 
 const player = new Player(scene);
+
+const physics = new Physics();
 
 // Lights setup
 function setupLights() {
@@ -76,6 +80,7 @@ function animate() {
 
     requestAnimationFrame(animate);
     player.applyInputs(dt);
+    physics.update(dt, player, world);
     renderer.render(
         scene,
         player.controls.isLocked ? player.camera : orbitCamera

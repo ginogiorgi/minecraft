@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { PointerLockControls } from "three/examples/jsm/Addons.js";
 export class Player {
+    radious = 0.5;
+    height = 1.75;
     maxSpeed = 10;
     input = new THREE.Vector3();
     velocity = new THREE.Vector3();
