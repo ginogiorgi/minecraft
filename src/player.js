@@ -26,6 +26,18 @@ export class Player {
 
         document.addEventListener("keydown", this.onKeyDown.bind(this));
         document.addEventListener("keyup", this.onKeyUp.bind(this));
+
+        // Visualicer of player bounding cylinder
+        this.boundsHelper = new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                this.radious,
+                this.radious,
+                this.height,
+                16
+            ),
+            new THREE.MeshBasicMaterial({ wireframe: true })
+        );
+        scene.add(this.boundsHelper);
     }
 
     applyInputs(dt) {
@@ -38,6 +50,14 @@ export class Player {
             document.getElementById("player-position").innerHTML =
                 this.toString();
         }
+    }
+
+    /**
+     * Updates position of player bunding cylinder
+     */
+    updateBoundsHelper() {
+        this.boundsHelper.position.copy(this.position);
+        this.boundsHelper.position.y -= this.height / 2;
     }
 
     /**

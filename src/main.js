@@ -80,6 +80,7 @@ function animate() {
 
     requestAnimationFrame(animate);
     player.applyInputs(dt);
+    player.updateBoundsHelper();
     physics.update(dt, player, world);
     renderer.render(
         scene,
@@ -92,8 +93,8 @@ function animate() {
 window.addEventListener("resize", () => {
     orbitCamera.aspect = window.innerWidth / window.innerHeight;
     orbitCamera.updateProjectionMatrix();
-    playerCamera.aspect = window.innerWidth / window.innerHeight;
-    playerCamera.updateProjectionMatrix();
+    player.camera.aspect = window.innerWidth / window.innerHeight;
+    player.camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
