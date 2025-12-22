@@ -43,7 +43,7 @@ scene.add(world);
 
 const player = new Player(scene);
 
-const physics = new Physics();
+const physics = new Physics(scene);
 
 // Lights setup
 function setupLights() {
