@@ -7,6 +7,11 @@ const collisionMaterial = new THREE.MeshBasicMaterial({
     opacity: 0.3,
 });
 const collisionGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001);
+const contactMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+});
+const contactGeometry = new THREE.SphereGeometry(0.05, 6, 6);
 
 export class Physics {
     constructor(scene) {
@@ -121,9 +126,12 @@ export class Physics {
                     overlap,
                 });
 
-                console.log(`Narrowphanse Collisions: ${collisions.length}`);
+                this.addContactPointHelper(closestPoint);
             }
         }
+        console.log(`Narrowphanse Collisions: ${collisions.length}`);
+
+        return collisions;
     }
 
     /**
@@ -135,6 +143,12 @@ export class Physics {
 
         blockMesh.position.copy(block);
         this.helpers.add(blockMesh);
+    }
+
+    addContactPointHelper(p) {
+        const contactMesh = new THREE.Mesh(contactGeometry, contactMaterial);
+        contactMesh.position.copy(p);
+        this.helpers.add(contactMesh);
     }
 
     /**
